@@ -6,6 +6,8 @@ namespace FantasyRPGFutureValue
         {
             InitializeComponent();
         }
+        //    gold,   silver, copper, intrate, years, months, total
+        List<(string, string, string, string, string, string, string)> values = new List<(string, string, string, string, string, string, string)>();
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
@@ -25,6 +27,9 @@ namespace FantasyRPGFutureValue
                     monthlyInvestment = CalculateFutureValue(monthlyInvestment, interestRate, years, monthsPerYear);
 
                     txtValueGold.Text = monthlyInvestment.ToString("C");
+
+                    values.Add((monthlyInvestmentGold.ToString(), monthlyInvestmentSilver.ToString(), monthlyInvestmentCopper.ToString(), (interestRate / 100).ToString("P1"),
+                        years.ToString(), monthsPerYear.ToString(), monthlyInvestment.ToString("C")));
                 }
             }
             catch(Exception ex)
@@ -104,7 +109,7 @@ namespace FantasyRPGFutureValue
             return success;
         }
 
-        private string IsInt32(string value, string name)
+        private string IsInt32(string value, string? name)
         {
             string msg = "";
             
@@ -116,7 +121,7 @@ namespace FantasyRPGFutureValue
             return msg;
         }
 
-        private string IsWithinRange(string value, string name, decimal min, decimal max)
+        private string IsWithinRange(string value, string? name, decimal min, decimal max)
         {
             string msg = "";
 
@@ -131,7 +136,7 @@ namespace FantasyRPGFutureValue
             return msg;
         }
 
-        private string IsDecimal(string value, string name)
+        private string IsDecimal(string value, string? name)
         {
             string msg = "";
 
@@ -145,6 +150,16 @@ namespace FantasyRPGFutureValue
 
         private void btnExit_Click(object sender, EventArgs e)
         {
+            string msg = "";
+
+            msg = "Monthly Gold \tMonthly Silver \tMonthly Copper \tInt Rate \tYears \tMonths Per Year \tTotal\n";
+
+            foreach (var list in values)
+            {
+                msg += list.Item1 + " \t" + list.Item2 + " \t" + list.Item3 + " \t" + list.Item4 + " \t" + list.Item5 + " \t" + list.Item6 + " \t" + list.Item7 + "\n";
+            }
+
+            MessageBox.Show(msg, "Future Value Calculations");
             Close();
         }
     }
