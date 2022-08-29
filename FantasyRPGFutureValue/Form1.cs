@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace FantasyRPGFutureValue
 {
     public partial class frmFutureValue : Form
@@ -6,8 +8,8 @@ namespace FantasyRPGFutureValue
         {
             InitializeComponent();
         }
-        //    gold,   silver, copper, intrate, years, months, total
-        List<(string, string, string, string, string, string, string)> values = new List<(string, string, string, string, string, string, string)>();
+        //    gold,   silver, copper, intrate, years, months, totalG, totalS, totalC
+        List<(string, string, string, string, string, string, string, string, string)> values = new List<(string, string, string, string, string, string, string, string, string)>();
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
@@ -15,22 +17,35 @@ namespace FantasyRPGFutureValue
             {
                 if (IsValidData())
                 {
-                    long monthlyInvestmentGold = Convert.ToInt64(txtMonthlyGold.Text);
-                    long monthlyInvestmentSilver = Convert.ToInt64(txtMonthlySilver.Text);
-                    long monthlyInvestmentCopper = Convert.ToInt64(txtMonthlyCopper.Text);
-                    decimal interestRate = Convert.ToDecimal(txtInterestRate.Text);
-                    int years = Convert.ToInt32(txtYears.Text);
-                    int monthsPerYear = Convert.ToInt32(txtMonths.Text);
+                    long monthlyInvestmentGold = long.Parse(txtMonthlyGold.Text, NumberStyles.Number);
+                    long monthlyInvestmentSilver = long.Parse(txtMonthlySilver.Text, NumberStyles.Number);
+                    long monthlyInvestmentCopper = long.Parse(txtMonthlyCopper.Text, NumberStyles.Number);
+                    decimal interestRate = decimal.Parse(txtInterestRate.Text, NumberStyles.Number);
+                    int years = int.Parse(txtYears.Text, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite);
+                    int monthsPerYear = int.Parse(txtMonths.Text, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite);
 
                     decimal monthlyInvestment = MonthlyInvestmentDecimal(monthlyInvestmentGold, monthlyInvestmentSilver, monthlyInvestmentCopper);
 
                     monthlyInvestment = CalculateFutureValue(monthlyInvestment, interestRate, years, monthsPerYear);
 
-                    txtValueGold.Text = monthlyInvestment.ToString("C");
+                    string[] strMonthlyInvestment = monthlyInvestment.ToString().Split(".");
+                    string temp = String.Format("{0:c}", strMonthlyInvestment[0]);
+                    string gold = temp + " gp";
+                    temp = String.Format("{0:c}", strMonthlyInvestment[1].Substring(0, 1));
+                    string silver = temp + " sp";
+                    temp = String.Format("{0:c}", strMonthlyInvestment[1].Substring(1, 1));
+                    string copper = temp + " cp";
+                    txtValueGold.Text = gold;
+                    txtValueSilver.Text = silver;
+                    txtValueCopper.Text = copper;
 
-                    values.Add((monthlyInvestmentGold.ToString(), monthlyInvestmentSilver.ToString(), monthlyInvestmentCopper.ToString(), (interestRate / 100).ToString("P1"),
-                        years.ToString(), monthsPerYear.ToString(), monthlyInvestment.ToString("C")));
+                    values.Add(((monthlyInvestmentGold.ToString() + " gp"), (monthlyInvestmentSilver.ToString() + " sp"), (monthlyInvestmentCopper.ToString() + " cp"), (interestRate / 100).ToString("P2"),
+                        years.ToString(), monthsPerYear.ToString(), gold, silver, copper));
                 }
+            }
+            catch (OverflowException)
+            {
+                MessageBox.Show("The value is too large. Enter a smaller value", "Entry Error");
             }
             catch(Exception ex)
             {
@@ -56,7 +71,7 @@ namespace FantasyRPGFutureValue
         {
             decimal monthlyInvestment = 0;
 
-            monthlyInvestment = ((monthlyInvestmentCopper / 100) + (monthlyInvestmentSilver / 10)) + monthlyInvestmentGold;
+            monthlyInvestment = (monthlyInvestmentCopper / 100) + (monthlyInvestmentSilver / 10) + monthlyInvestmentGold;
 
             return monthlyInvestment;
         }
@@ -113,7 +128,7 @@ namespace FantasyRPGFutureValue
         {
             string msg = "";
             
-            if (!Int32.TryParse(value, out _))
+            if (!Int32.TryParse(value, NumberStyles.Number, CultureInfo.CurrentCulture, out _))
             {
                 msg += name + " must be a valid integer value.\n";
             }
@@ -125,7 +140,7 @@ namespace FantasyRPGFutureValue
         {
             string msg = "";
 
-            if (Decimal.TryParse(value, out decimal number))
+            if (Decimal.TryParse(value, NumberStyles.Number, CultureInfo.CurrentCulture, out decimal number))
             {
                 if (number < min || number > max)
                 {
@@ -140,7 +155,7 @@ namespace FantasyRPGFutureValue
         {
             string msg = "";
 
-            if (!Decimal.TryParse(value, out _))
+            if (!Decimal.TryParse(value, NumberStyles.Number, CultureInfo.CurrentCulture, out _))
             {
                 msg += name + " must be a valid decimal value.\n";
             }
@@ -152,11 +167,11 @@ namespace FantasyRPGFutureValue
         {
             string msg = "";
 
-            msg = "Monthly Gold \tMonthly Silver \tMonthly Copper \tInt Rate \tYears \tMonths Per Year \tTotal\n";
+            msg = "Monthly Gold \tMonthly Silver \tMonthly Copper \tInt Rate \tYears \tMonths Per Year \tGold \tSilver \tCopper\n";
 
             foreach (var list in values)
             {
-                msg += list.Item1 + " \t" + list.Item2 + " \t" + list.Item3 + " \t" + list.Item4 + " \t" + list.Item5 + " \t" + list.Item6 + " \t" + list.Item7 + "\n";
+                msg += list.Item1 + " \t" + list.Item2 + " \t" + list.Item3 + " \t" + list.Item4 + " \t" + list.Item5 + " \t" + list.Item6 + " \t" + list.Item7 + "\t" + list.Item8 + "\t" + list.Item9 + "\n";
             }
 
             MessageBox.Show(msg, "Future Value Calculations");

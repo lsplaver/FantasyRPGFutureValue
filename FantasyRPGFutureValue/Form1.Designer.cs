@@ -127,7 +127,6 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Enabled = false;
             this.label9.Location = new System.Drawing.Point(32, 299);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(97, 15);
@@ -193,7 +192,6 @@
             // 
             // txtValueSilver
             // 
-            this.txtValueSilver.Enabled = false;
             this.txtValueSilver.Location = new System.Drawing.Point(277, 296);
             this.txtValueSilver.Name = "txtValueSilver";
             this.txtValueSilver.ReadOnly = true;
@@ -204,7 +202,6 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Enabled = false;
             this.label10.Location = new System.Drawing.Point(32, 334);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(108, 15);
@@ -213,7 +210,6 @@
             // 
             // txtValueCopper
             // 
-            this.txtValueCopper.Enabled = false;
             this.txtValueCopper.Location = new System.Drawing.Point(277, 331);
             this.txtValueCopper.Name = "txtValueCopper";
             this.txtValueCopper.ReadOnly = true;
